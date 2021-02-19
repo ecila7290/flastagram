@@ -45,3 +45,30 @@ class UserDao:
         """),{'email':email}).fetchone()
         
         return row if row else None
+
+    def get_followed(self, user_id, follow_id):
+        return self.db.execute(text("""
+            SELECT IF (EXISTS (
+                SELECT * FROM users_follow_list
+                WHERE user_id=:id AND follow_user_id=:follow
+            ),1,0)
+        """),{'id':user_id, 'follow':follow_id}).fetchone()
+
+    def insert_follow(self, user_id, follow_id):
+        return self.db.execute(text("""
+            INSERT INTO users_follow_list(
+                user_id,
+                follow_user_id
+            ) VALUES (
+                :id,
+                :follow
+            )
+        """), {'id':user_id, 'follow':follow_id}).rowcount
+
+    def update_follow(self, user_id, follow_id, status):
+        return self.db.execute(text("""
+            UPDATE users_follow_list
+            SET followed=:status
+            WHERE user_id=:id AND follow_user_id=:follow
+        """), {'id':user_id, 'follow':follow_id, 'status':status}).rowcount
+    

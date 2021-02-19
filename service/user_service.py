@@ -38,3 +38,14 @@ class UserService:
         token=jwt.encode(payload, self.config['JWT_SECRET_KEY'], self.config['ALGORITHM'])
 
         return token
+
+    def follow(self, user_id, follow_id):
+        followed=self.user_dao.get_followed(user_id, follow_id)
+        
+        if followed[0]:
+            return self.user_dao.update_follow(user_id, follow_id, 1)
+        else:
+            return self.user_dao.insert_follow(user_id, follow_id)
+
+    def unfollow(self, user_id, follow_id):
+        return self.user_dao.update_follow(user_id, follow_id, 0)
