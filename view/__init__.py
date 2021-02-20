@@ -32,6 +32,7 @@ def login_required(f):
 
 def create_endpoints(app, services):
     user_service=services.user_service
+    post_service=services.post_service
 
     @app.route('/signup', methods=['POST'])
     def signup():
@@ -76,3 +77,27 @@ def create_endpoints(app, services):
         user_service.unfollow(user_id, follow_id)
 
         return 'success', 200
+
+    @app.route('/post', methods=['POST'])
+    @login_required
+    def post():
+        user_post=request.json
+        content=user_post['content']
+        image_urls=user_post['images']
+        user_id=g.user_id
+
+        new_post_id=post_service.post(user_id, content)
+        post_service.post_images(user_id, new_post_id, image_urls)
+
+        return 'success', 201            
+
+    @app.route('/<int:user_id>/post', methods=['GET'])
+    def get_user_post(user_id):
+        user_post=post_service.get_user_post(user_id)
+
+        return jsonify({
+            'posts':user_post
+        })
+
+    # @app.route('/<int:user_id>/post/<int:post_id>', methods=['GET'])
+    # def get_user_post_detail(user_id, post_id):

@@ -49,3 +49,4 @@ class UserService:
 
     def unfollow(self, user_id, follow_id):
         return self.user_dao.update_follow(user_id, follow_id, 0)
+

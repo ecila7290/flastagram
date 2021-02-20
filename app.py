@@ -4,8 +4,8 @@ from flask import Flask
 from flask_cors import CORS
 from sqlalchemy import create_engine
 
-from service import UserService
-from model import UserDao
+from service import UserService, PostService
+from model import UserDao, PostDao
 from view import create_endpoints
 
 class Service:
@@ -24,10 +24,12 @@ def create_app(test_config=None):
 
     # persistence layer
     user_dao=UserDao(database)
+    post_dao=PostDao(database)
 
     # business layer
     services=Service()
     services.user_service=UserService(user_dao,app.config)
+    services.post_service=PostService(post_dao,app.config)
     
     # create endpoint
     create_endpoints(app, services)
