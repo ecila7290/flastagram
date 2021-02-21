@@ -102,8 +102,27 @@ def create_endpoints(app, services):
     @app.route('/<int:user_id>/post/<int:post_id>', methods=['GET'])
     def get_user_post_detail(user_id, post_id):
         post_detail=post_service.get_post_detail(user_id, post_id)
-
+        likes=post_service.get_post_likes(post_id)
+        
         return jsonify({
             'post_id':post_id,
+            'likes':likes,
             'detail':post_detail
         })
+
+    @app.route('/<int:user_id>/post/<int:post_id>/like', methods=['POST'])
+    @login_required
+    def like(user_id,post_id):
+        like_id=g.user_id
+        post_service.like(like_id, post_id)
+
+        return 'success', 200
+
+    @app.route('/<int:user_id>/post/<int:post_id>/unlike', methods=['POST'])
+    @login_required
+    def unlike(user_id,post_id):
+        unlike_id=g.user_id
+        post_service.unlike(unlike_id, post_id)
+
+        return 'success', 200
+    
