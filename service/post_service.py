@@ -13,3 +13,5 @@ class PostService:
     def get_user_post(self, user_id):
         return self.post_dao.get_posts(user_id)
 
+    def get_post_detail(self, user_id, post_id):
+        return self.post_dao.get_post_detail(user_id, post_id)

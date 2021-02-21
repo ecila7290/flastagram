@@ -99,5 +99,11 @@ def create_endpoints(app, services):
             'posts':user_post
         })
 
-    # @app.route('/<int:user_id>/post/<int:post_id>', methods=['GET'])
-    # def get_user_post_detail(user_id, post_id):
+    @app.route('/<int:user_id>/post/<int:post_id>', methods=['GET'])
+    def get_user_post_detail(user_id, post_id):
+        post_detail=post_service.get_post_detail(user_id, post_id)
+
+        return jsonify({
+            'post_id':post_id,
+            'detail':post_detail
+        })

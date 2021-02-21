@@ -41,8 +41,28 @@ class PostDao:
             GROUP BY post_id
             ORDER BY ANY_VALUE(-created_at)
         """),{'id':user_id}).fetchall()
-        print(rows)
+        
         return [{
             'post_id':post[1],
             'image_url': post[2]
         } for post in rows]
+
+    def get_post_detail(self, user_id, post_id):
+        content=self.db.execute(text("""
+            SELECT
+                content
+            FROM posts
+            WHERE id=:post_id
+        """),{'post_id':post_id}).fetchone()
+
+        images=self.db.execute(text("""
+            SELECT
+                image_url
+            FROM post_images
+            WHERE user_id=:id AND post_id=:post_id
+        """),{'id':user_id, 'post_id':post_id}).fetchall()
+
+        return {
+            'content':content['content'],
+            'images':[image['image_url'] for image in images]
+            }
