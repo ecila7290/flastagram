@@ -72,7 +72,7 @@ def create_endpoints(app, services):
     def unfollow():
         payload=request.json
         user_id=g.user_id
-        follow_id=payload['follow']
+        follow_id=payload['unfollow']
 
         user_service.unfollow(user_id, follow_id)
 
@@ -126,3 +126,7 @@ def create_endpoints(app, services):
 
         return 'success', 200
     
+    @app.route('/timeline', methods=['GET'])
+    @login_required
+    def timeline():
+        user_id=g.user_id

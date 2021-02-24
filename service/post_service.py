@@ -29,3 +29,6 @@ class PostService:
 
     def get_post_likes(self, post_id):
         return self.post_dao.get_post_likes(post_id)
+
+    def get_timeline(self, user_id):
+        return self.post_dao.get_timeline(user_id)

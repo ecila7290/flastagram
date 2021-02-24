@@ -110,3 +110,12 @@ class PostDao:
                 'name':user['name']
             } for user in likes]
         }
+
+    def get_timeline(self, user_id):
+        posts=
+        select DISTINCT p.id, p.user_id, p.content, p.created_at, pi.image_url
+                              -> from posts p
+                              -> left join users_follow_list ufl on ufl.user_id=1
+                              -> left join post_images pi on pi.post_id=p.id
+                              -> where ufl.followed=1 and(p.user_id=1 or p.user_id=ufl.follow_user_id)
+                              -> order by -p.created_at;
