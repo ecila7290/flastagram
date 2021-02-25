@@ -130,3 +130,9 @@ def create_endpoints(app, services):
     @login_required
     def timeline():
         user_id=g.user_id
+        timeline=post_service.get_timeline(user_id)
+
+        return jsonify({
+            'user_id':user_id,
+            'timeline':timeline
+        })

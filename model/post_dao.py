@@ -112,10 +112,39 @@ class PostDao:
         }
 
     def get_timeline(self, user_id):
-        posts=
-        select DISTINCT p.id, p.user_id, p.content, p.created_at, pi.image_url
-                              -> from posts p
-                              -> left join users_follow_list ufl on ufl.user_id=1
-                              -> left join post_images pi on pi.post_id=p.id
-                              -> where ufl.followed=1 and(p.user_id=1 or p.user_id=ufl.follow_user_id)
-                              -> order by -p.created_at;
+        posts=self.db.execute(text("""
+            SELECT DISTINCT
+                p.id, p.user_id, p.content, p.created_at
+            FROM posts p
+            LEFT JOIN users_follow_list ufl ON ufl.user_id=:id
+            WHERE ufl.followed=:id AND (p.user_id=:id OR p.user_id=ufl.follow_user_id)
+            ORDER BY -p.created_at
+        """), {'id':user_id}).fetchall()
+        
+        images=self.db.execute(text("""
+            SELECT DISTINCT
+                pi.image_url, p.id, p.created_at
+            FROM post_images pi
+            LEFT JOIN users_follow_list ufl ON ufl.user_id=:id
+            LEFT JOIN posts p ON pi.post_id=p.id
+            WHERE ufl.followed=:id AND (p.user_id=:id OR p.user_id=ufl.follow_user_id)
+            ORDER BY -p.created_at
+        """),{'id':user_id}).fetchall()
+
+        timeline={'posts':[]}
+        for p in posts:
+            post={}
+            post['post_id']=p['id']
+            post['user_id']=p['user_id']
+            post['content']=p['content']
+            
+            image_urls=[]
+            for i in images:
+                if i['id']==p['id']:
+                    image_urls.append(i['image_url'])
+            else:
+                post['images']=image_urls
+                    
+            timeline['posts'].append(post)
+        
+        return timeline
